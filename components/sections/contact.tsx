@@ -1,75 +1,67 @@
 "use client"
 
-import { MessageCircle, Phone } from "lucide-react"
+import { Phone } from "lucide-react"
+// استيراد أيقونة واتساب من FontAwesome أو استخدام SVG مخصص
+import { FaWhatsapp } from "react-icons/fa" 
 import { useLanguage } from "@/lib/i18n/language-context"
-
-interface ContactInfo {
-  icon: React.ReactNode
-  title: string
-  value: string
-  action: string
-  colorClass: string 
-}
 
 export function ContactSection() {
   const { isRtl } = useLanguage()
 
-  const contactInfo: ContactInfo[] = [
+  const contactLinks = [
     {
-      icon: <MessageCircle className="w-8 h-8 text-white" />,
-      title: "WhatsApp",
-      value: "+1 (555) 123-4567",
-      action: "https://wa.me/15551234567",
-      colorClass: "bg-[#25D366]", // لون واتساب
+      name: "WhatsApp",
+      icon: <FaWhatsapp className="w-8 h-8 md:w-10 md:h-10 text-white" />,
+      href: "https://wa.me/212600000000", // ضع رقمك هنا
+      bgColor: "bg-[#25D366]",
+      shadow: "shadow-[0_10px_20px_-5px_rgba(37,211,102,0.4)]"
     },
     {
-      icon: <Phone className="w-7 h-7 text-white" />,
-      title: "Phone",
-      value: "+1 (555) 123-4567",
-      action: "tel:+15551234567",
-      colorClass: "bg-orange-500", // لون البراند
-    },
+      name: "Phone",
+      icon: <Phone className="w-7 h-7 md:w-9 md:h-9 text-white" />,
+      href: "tel:+212600000000", // ضع رقمك هنا
+      bgColor: "bg-orange-500",
+      shadow: "shadow-[0_10px_20px_-5px_rgba(249,115,22,0.4)]"
+    }
   ]
 
   return (
-    <section id="contact" className="py-20 px-4 md:px-8 bg-white relative">
-      <div className="max-w-6xl mx-auto">
+    <section id="contact" className="py-16 md:py-24 bg-white relative overflow-hidden">
+      <div className="max-w-4xl mx-auto px-6 relative z-10">
         
-        {/* العناوين - تم تصغيرها قليلاً للهواتف */}
-        <div className="text-center mb-16">
-          <p className="text-accent font-semibold text-sm tracking-widest uppercase mb-4">
+        {/* العناوين */}
+        <div className="text-center mb-12">
+          <p className="text-orange-600 font-bold text-xs md:text-sm tracking-[0.2em] uppercase mb-3">
             {isRtl ? "تواصل معنا" : "GET IN TOUCH"}
           </p>
-          <h2 className="text-3xl md:text-5xl font-black mb-6">
-            {isRtl ? "اتصل " : "Contact "}<span className="text-accent">{isRtl ? "بنا" : "Us"}</span>
+          <h2 className="text-3xl md:text-5xl font-black text-orange-950">
+            {isRtl ? "اتصل " : "Contact "}<span className="text-orange-600">{isRtl ? "بنا" : "Us"}</span>
           </h2>
         </div>
 
-        {/* 1. التعديل الأساسي: حاوية الأيقونات للهواتف */}
-        {/* في الهاتف: flex لتصبح في سطر واحد، p-6 لتقليل المساحات البيضاء */}
-        {/* في الحاسوب: تعود لشكل البطاقات md:grid md:grid-cols-2 gap-8 */}
-        <div className={`max-w-3xl mx-auto bg-card rounded-[2.5rem] p-6 md:p-10 border border-border shadow-sm flex items-center justify-center gap-6 md:grid md:grid-cols-2 md:gap-8`}>
-          
-          {/* 2. التعديل الثانوي: الأيقونة نفسها */}
-          {contactInfo.map((info, index) => (
-            <a
-              key={index}
-              href={info.action}
-              target="_blank"
-              rel="noopener noreferrer"
-              className="group text-center flex-shrink-0"
-            >
-              {/* في الهاتف: w-20 h-20، في الحاسوب: md:w-32 md:h-32 */}
-              <div className="flex flex-col items-center gap-3">
-                <div className={`w-20 h-20 md:w-32 md:h-32 ${info.colorClass} rounded-full md:rounded-3xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-all duration-300`}>
-                  {info.icon}
-                </div>
-                {/* إخفاء التفاصيل في الهواتف وإظهارها في الحواسيب */}
-                <h3 className="text-sm md:text-2xl font-bold text-foreground hidden md:block">{info.title}</h3>
-                <p className="text-foreground/70 font-medium text-xs md:text-lg hidden md:block">{info.value}</p>
-              </div>
-            </a>
-          ))}
+        {/* الحاوية البيضاء التي تضم الأيقونات */}
+        <div className="bg-white p-8 md:p-12 rounded-[2.5rem] md:rounded-[4rem] border border-orange-50 shadow-2xl shadow-orange-900/5 max-w-xl mx-auto">
+          <div className="flex items-center justify-center gap-8 md:gap-16">
+            {contactLinks.map((link, index) => (
+              <a
+                key={index}
+                href={link.href}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={`
+                  relative flex items-center justify-center 
+                  w-20 h-20 md:w-28 md:h-28 
+                  ${link.bgColor} rounded-full 
+                  ${link.shadow}
+                  transition-all duration-300 hover:scale-110 active:scale-95
+                `}
+              >
+                {link.icon}
+                {/* تأثير نبض خفيف خلف الأيقونة */}
+                <span className={`absolute inset-0 rounded-full ${link.bgColor} animate-ping opacity-20 -z-10`}></span>
+              </a>
+            ))}
+          </div>
         </div>
 
       </div>
