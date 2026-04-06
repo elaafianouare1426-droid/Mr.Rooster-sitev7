@@ -50,9 +50,13 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en" className="scroll-smooth" suppressHydrationWarning>
-      <body className={`${poppins.className} ${notoSansArabic.variable} antialiased`}>
+      {/* تم إضافة overflow-x-hidden و relative لمنع الانزياح الجانبي */}
+      <body className={`${poppins.className} ${notoSansArabic.variable} antialiased overflow-x-hidden relative w-full`}>
         <LanguageProvider>
-          {children}
+          {/* تم تغليف الأبناء بحاوية تضمن ثبات العرض */}
+          <div className="flex flex-col min-h-screen w-full overflow-x-hidden">
+            {children}
+          </div>
         </LanguageProvider>
         <Analytics />
       </body>
