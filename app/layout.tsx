@@ -18,22 +18,10 @@ const notoSansArabic = Noto_Sans_Arabic({
 
 export const metadata: Metadata = {
   title: 'Mr.Rooster Poultry Farm | Healthy Poultry, Strong Breeds, Trusted Farm',
-  description: 'Mr.Rooster Poultry Farm - Your trusted source for healthy poultry, strong breeds, and premium farming solutions. Australorp Black, Golden Leghorn, French Hybrid, and our exclusive Mr.Rooster Light breed.',
-  keywords: ['poultry farm', 'chicks', 'fertile eggs', 'incubation', 'farming', 'Mr Rooster', 'Australorp', 'Leghorn', 'chicken breeds'],
-  authors: [{ name: 'Mr.Rooster Poultry Farm' }],
-  generator: 'v0.app',
+  description: 'Mr.Rooster Poultry Farm - Your trusted source for healthy poultry, strong breeds, and premium farming solutions.',
   icons: {
-    icon: [
-      {
-        url: '/images/logo.png',
-      },
-    ],
+    icon: '/images/logo.png',
     apple: '/images/logo.png',
-  },
-  openGraph: {
-    title: 'Mr.Rooster Poultry Farm',
-    description: 'Healthy Poultry | Strong Breeds | Trusted Farm',
-    type: 'website',
   },
 }
 
@@ -41,6 +29,8 @@ export const viewport: Viewport = {
   themeColor: '#FF9900',
   width: 'device-width',
   initialScale: 1,
+  // إضافة لمنع المستخدم من تكبير الشاشة يدوياً مما قد يسبب انزياحاً وهمياً
+  maximumScale: 1, 
 }
 
 export default function RootLayout({
@@ -49,14 +39,15 @@ export default function RootLayout({
   children: React.ReactNode
 }>) {
   return (
-    <html lang="en" className="scroll-smooth" suppressHydrationWarning>
-      {/* تم إضافة overflow-x-hidden و relative لمنع الانزياح الجانبي */}
-      <body className={`${poppins.className} ${notoSansArabic.variable} antialiased overflow-x-hidden relative w-full`}>
+    // ملاحظة: اللغة والاتجاه يتم التحكم بهما ديناميكياً عبر LanguageProvider
+    // لذا نترك html كإطار عام
+    <html lang="en" className="scroll-smooth overflow-x-hidden" suppressHydrationWarning>
+      <body className={`${poppins.className} ${notoSansArabic.variable} antialiased overflow-x-hidden relative w-full m-0 p-0`}>
         <LanguageProvider>
-          {/* تم تغليف الأبناء بحاوية تضمن ثبات العرض */}
-          <div className="flex flex-col min-h-screen w-full overflow-x-hidden">
+          {/* الحاوية الرئيسية: أضفنا max-w-full لضمان عدم تجاوز العرض مهما حدث */}
+          <main className="flex flex-col min-h-screen w-full max-w-full overflow-hidden">
             {children}
-          </div>
+          </main>
         </LanguageProvider>
         <Analytics />
       </body>
