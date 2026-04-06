@@ -137,67 +137,27 @@
 @layer base {
   * {
     @apply border-border outline-ring/50;
+    /* إضافة لمنع مشاكل العرض في الهواتف */
+    box-sizing: border-box;
   }
+  
+  html, body {
+    /* صمام الأمان: منع التمرير الأفقي نهائياً */
+    max-width: 100vw;
+    overflow-x: hidden;
+    position: relative;
+  }
+
   body {
     @apply bg-background text-foreground antialiased;
+    /* ضمان أن الجسم يأخذ كامل العرض المتاح فقط */
+    width: 100%;
+    min-height: 100vh;
   }
+
   html {
     scroll-behavior: smooth;
   }
-}
-
-/* Premium Gradient backgrounds */
-.gradient-hero {
-  background: linear-gradient(135deg, var(--yellow-start) 0%, var(--brand-secondary) 25%, var(--brand-primary) 65%, var(--brand-accent) 100%);
-}
-
-.gradient-soft {
-  background: linear-gradient(135deg, rgba(255, 217, 0, 0.06) 0%, rgba(255, 153, 0, 0.1) 100%);
-}
-
-.gradient-button {
-  background: linear-gradient(135deg, var(--brand-primary) 0%, var(--brand-accent) 60%, var(--orange-deep) 100%);
-  transition: all 0.3s ease;
-}
-
-.gradient-button:hover {
-  background: linear-gradient(135deg, var(--brand-accent) 0%, var(--orange-deep) 60%, #CC6600 100%);
-  transform: translateY(-1px);
-}
-
-.gradient-subtle {
-  background: linear-gradient(180deg, rgba(255, 217, 0, 0.04) 0%, rgba(255, 153, 0, 0.1) 100%);
-}
-
-.gradient-card {
-  background: linear-gradient(135deg, rgba(255, 217, 0, 0.03) 0%, rgba(255, 128, 0, 0.06) 100%);
-}
-
-/* Premium shadows using brand colors */
-.shadow-premium {
-  box-shadow: 
-    0 4px 6px -1px rgba(0, 0, 0, 0.04),
-    0 10px 20px -2px rgba(0, 0, 0, 0.03),
-    0 20px 25px -5px rgba(255, 153, 0, 0.08);
-}
-
-.shadow-premium-lg {
-  box-shadow: 
-    0 10px 15px -3px rgba(0, 0, 0, 0.04),
-    0 20px 30px -4px rgba(0, 0, 0, 0.03),
-    0 25px 50px -12px rgba(255, 153, 0, 0.12);
-}
-
-.shadow-glow {
-  box-shadow: 0 0 40px rgba(255, 153, 0, 0.2);
-}
-
-.shadow-glow-lg {
-  box-shadow: 0 0 60px rgba(255, 153, 0, 0.3);
-}
-
-.shadow-brand {
-  box-shadow: 0 4px 14px -2px rgba(255, 153, 0, 0.25);
 }
 
 /* Custom animations */
