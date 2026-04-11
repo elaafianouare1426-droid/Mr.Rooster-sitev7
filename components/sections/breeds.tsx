@@ -1,87 +1,66 @@
 "use client"
 
 import { useState, useEffect } from "react"
-import { X, Phone, MessageCircle, Info, Activity, Egg, Weight, ShoppingCart } from "lucide-react"
+import { X, Phone, MessageCircle, ChevronLeft, ChevronRight, Info, ShoppingCart } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { motion, AnimatePresence } from "framer-motion"
 
-interface BreedDetail {
-  id: string
-  names: { ar: string; en: string; fr: string }
-  descriptions: { ar: string; en: string; fr: string }
-  images: string[]
-  stats: {
-    eggs: string;
-    meat: { ar: string; en: string; fr: string };
-  }
-  available: { eggs: boolean; chicks: boolean }
-  features: {
-    labels: { ar: string; en: string; fr: string }
-    values: { ar: string; en: string; fr: string }
-    icon: string
-  }[]
-}
-
-
-const breedsData: BreedDetail[] = [
+const breedsData = [
   {
     id: "australorp",
     names: { ar: "أسترالورب الأسود", en: "Black Australorp", fr: "Australorp Noir" },
     descriptions: { 
-      ar: "سلالة أصيلة تم تطويرها في أستراليا، وتعتبر الفخر الوطني هناك. تتمتع بإنتاجية عالية جداً وهي من أفضل الدجاج البياض في العالم.", 
-      en: "A pure breed developed in Australia. Excellent laying capacity and world-class productivity.", 
-      fr: "Race pure développée en Australie. Excellente capacité de ponte et productivité de classe mondiale." 
+      ar: "تعتبر الأسترالورب الفخر الوطني لأستراليا، وهي حاملة الرقم القياسي العالمي في غزارة إنتاج البيض. هي سلالة نشيطة جداً وتمتاز بريش أسود كثيف بلمعة خضراء ساحرة. ما يميزها هو قدرتها العالية على التكيف مع مختلف الظروف المناخية وسرعة نموها الملحوظة، مما يجعلها الخيار الأول للمربين الباحثين عن مشروع مستدام يجمع بين غزارة الإنتاج وسهولة التربية.",
+      en: "The national pride of Australia, holding the world record for egg production. Known for its climate adaptability and rapid growth, it's the top choice for sustainable projects combining high productivity with ease of care.",
+      fr: "Fierté nationale de l'Australie, détenant le record mondial de ponte. Connue pour sa grande adaptabilité climatique et sa croissance rapide, c'est le choix idéal pour des projets durables alliant productivité et facilité d'élevage."
     },
-    images: ["/images/breeds/A1.jpg", "/images/breeds/a2_optimized.png", "/images/breeds/B2.png"],
-    stats: { eggs: "+270", meat: { ar: "3kg - 4kg (ممتاز)", en: "3kg - 4kg", fr: "3kg - 4kg" } },
-    available: { eggs: true, chicks: true },
+    images: ["/images/breeds/A1.jpg", "/images/breeds/a2_optimized.png"],
+    available: { eggs: true, chicks: true, hens: true },
     features: [
       { labels: { ar: "الأصل", en: "Origin", fr: "Origine" }, values: { ar: "أستراليا", en: "Australia", fr: "Australie" }, icon: "🇦🇺" },
-      { labels: { ar: "المقاومة", en: "Resistance", fr: "Résistance" }, values: { ar: "قوية جداً", en: "Very Strong", fr: "Très Forte" }, icon: "🛡️" }
+      { labels: { ar: "الإنتاج", en: "Production", fr: "Production" }, values: { ar: "قياسي", en: "Record", fr: "Record" }, icon: "🏆" }
     ]
   },
   {
     id: "farnsi",
-    names: { ar: "الدجاج الفرنسي (لا ماران)", en: "the Marans fawn aque black", fr: "la marans fauve aque noir" },
+    names: { ar: "الدجاج الفرنسي (لا ماران)", en: "Marans (Fawn Black)", fr: "La Marans (Fauve Noir)" },
     descriptions: { 
-      ar: "سلالة فرنسية عريقة نشأت في منطقة ماران. دجاج أصيل يتميز بحجم كبير وإنتاجية عالية للحم والبيض البني الداكن.", 
-      en: "Ancient French breed from the Marans region. Known for dark brown eggs and high meat productivity.", 
-      fr: "Ancienne race française de Marans. Connue pour ses œufs brun foncé." 
+      ar: "سلالة فرنسية أصيلة وعريقة، تشتهر عالمياً بلقب 'دجاجة البيض الذهبي' لإنتاجها بيضاً فريداً بلون بني داكن يشبه الشوكولاتة. تمتاز هذه السلالة ببنية جسدية قوية تجعلها ثنائية الغرض، فهي ممتازة لإنتاج اللحم الفاخر إلى جانب كفاءتها في وضع البيض. دجاج هادئ، مقاوم للأمراض، ويضيف لمسة من التميز والجمالية لأي مزرعة.",
+      en: "An authentic French breed, globally nicknamed the 'Golden Egg Hen' for its unique chocolate-brown eggs. Its robust build makes it a dual-purpose breed, excellent for premium meat and efficient egg laying. Calm and disease-resistant.",
+      fr: "Race française authentique, surnommée mondialement 'la poule aux œufs d'or' pour ses œufs uniques brun chocolat. Sa stature robuste en fait une race à double usage, excellente pour la viande de qualité et la ponte efficace."
     },
-    images: ["/images/breeds/f11.png", "/images/breeds/f1.png", "/images/breeds/f14.png", "/images/breeds/f12.png"],
-    stats: { eggs: "+250", meat: { ar: "2kg - 3kg (متوسط)", en: "2kg - 3kg", fr: "2kg - 3kg" } },
-    available: { eggs: true, chicks: true },
+    images: ["/images/breeds/f11.png", "/images/breeds/f1.png", "/images/breeds/f14.png"],
+    available: { eggs: true, chicks: true, hens: true },
     features: [
       { labels: { ar: "الأصل", en: "Origin", fr: "Origine" }, values: { ar: "فرنسا", en: "France", fr: "France" }, icon: "🇫🇷" },
-      { labels: { ar: "جودة اللحم", en: "Meat Quality", fr: "Qualité Viande" }, values: { ar: "ممتازة", en: "Excellent", fr: "Excellente" }, icon: "🍗" }
+      { labels: { ar: "اللحم", en: "Meat", fr: "Viande" }, values: { ar: "فاخر", en: "Premium", fr: "Premium" }, icon: "🍗" }
     ]
   },
   {
     id: "leghorn",
     names: { ar: "لجهورن الذهبي", en: "Golden Leghorn", fr: "Leghorn Doré" },
     descriptions: { 
-      ar: "سلالة إيطالية شهيرة نشأت في منطقة توسكانا. متخصصة في إنتاج البيض، تتميز بجسم رشيق ونشاط عالٍ وريش ذهبي جذاب.", 
-      en: "Famous Italian breed from Tuscany. Specialized in egg production.", 
-      fr: "Célèbre race italienne de Toscane. Spécialisée dans la ponte." 
+      ar: "الماكينة الإيطالية الشهيرة التي لا تتوقف عن العطاء. تنفرد اللجهورن برشاقتها العالية وجمال ريشها الذهبي المنقط، وهي متخصصة بشكل كامل في إنتاج البيض الأبيض الكبير بنسب مرتفعة جداً. تتميز هذه السلالة بكفاءتها الاقتصادية العالية، حيث تستهلك كميات قليلة من العلف مقابل إنتاج غزير، مما يجعلها الحل الأمثل لمشاريع إنتاج البيض.",
+      en: "The famous Italian egg machine. Unique for its agility and spotted golden feathers, it specializes in high-volume production of large white eggs. High economic efficiency with low feed consumption.",
+      fr: "La célèbre machine à œufs italienne. Unique par son agilité et son plumage doré tacheté, elle se spécialise dans la production massive de gros œufs blancs. Très économique grâce à une faible consommation d'aliments."
     },
     images: ["/images/breeds/leg1.png", "/images/breeds/leghorn_dor2.png"],
-    stats: { eggs: "300", meat: { ar: "ضعيفة جداً (بياض صرف)", en: "Very Low", fr: "Très Faible" } },
-    available: { eggs: true, chicks: true },
+    available: { eggs: true, chicks: true, hens: false },
     features: [
       { labels: { ar: "الأصل", en: "Origin", fr: "Origine" }, values: { ar: "إيطاليا", en: "Italy", fr: "Italie" }, icon: "🇮🇹" },
-      { labels: { ar: "النشاط", en: "Activity", fr: "Activité" }, values: { ar: "عالي جداً", en: "Very High", fr: "Très Élevée" }, icon: "⚡" }
+      { labels: { ar: "البيض", en: "Eggs", fr: "Œufs" }, values: { ar: "أبيض ناصع", en: "Pure White", fr: "Blanc Pur" }, icon: "🥚" }
     ]
   },
   {
     id: "isabrown",
     names: { ar: "إيزا براون", en: "Isa Brown", fr: "Isa Brown" },
     descriptions: { 
-      ar: "سلالة هجينة حديثة تم تطويرها في فرنسا لأغراض تجارية. تعتبر ملكة إنتاج البيض البني، قوية جداً وتتحمل مختلف الظروف.", 
-      en: "Modern hybrid developed in France. The queen of brown egg production, highly robust and healthy.", 
-      fr: "Hybride moderne développé en France. Reine de la ponte, très robuste." 
+      ar: "ملكة الاستثمار في قطاع الدواجن بلا منازع. هي هجين فرنسي تم تطويره ليكون الأكثر موثوقية وإنتاجية للبيض البني في العالم. تمتاز إيزا براون بهدوئها الشديد وألفتها مع الإنسان، وتبدأ في وضع البيض في سن مبكرة جداً. هي دجاجة قوية، قليلة المشاكل الصحية، وتضمن للمربي استمرارية في الإنتاج طوال فصول السنة.",
+      en: "The undisputed queen of poultry investment. A French hybrid developed for reliable brown egg production. Known for its calm nature and early laying. Robust and healthy for continuous production.",
+      fr: "La reine incontestée de l'investissement avicole. Hybride français développé pour la production d'œufs bruns la plus fiable au monde. Très calme, elle commence à pondre tôt et garantit une production continue."
     },
-    images: ["/images/breeds/isa2.png", "/images/breeds/isa1.png", "/images/breeds/isa3.png"],
-    stats: { eggs: "+300", meat: { ar: "ضعيفة", en: "Low", fr: "Faible" } },
-    available: { eggs: false, chicks: true },
+    images: ["/images/breeds/isa2.png", "/images/breeds/isa1.png"],
+    available: { eggs: true, chicks: true, hens: true },
     features: [
       { labels: { ar: "النوع", en: "Type", fr: "Type" }, values: { ar: "هجين بياض", en: "Hybrid Layer", fr: "Hybride" }, icon: "🧬" },
       { labels: { ar: "التكيف", en: "Adaptability", fr: "Adaptabilité" }, values: { ar: "ممتاز", en: "Excellent", fr: "Excellent" }, icon: "🌍" }
@@ -94,9 +73,9 @@ const WHATSAPP_NUMBER = "2126XXXXXXXX"
 
 export function BreedsSection() {
   const [currentLang, setCurrentLang] = useState<"ar" | "en" | "fr">("fr");
-  const [selectedBreed, setSelectedBreed] = useState<BreedDetail | null>(null);
+  const [selectedBreed, setSelectedBreed] = useState<any>(null);
   const [selectedImgIdx, setSelectedImgIdx] = useState(0);
-  const [orderModal, setOrderModal] = useState<{ isOpen: boolean; breedName: string; type: string } | null>(null);
+  const [orderModal, setOrderModal] = useState<any>(null);
 
   useEffect(() => {
     const updateLang = () => {
@@ -110,196 +89,138 @@ export function BreedsSection() {
   }, []);
 
   const ui = {
-    fr: { title: "Nos", titleAccent: "Races", subTitle: "Découvrez notre sélection d'élite pour une production d'excellence.", eggs: "Œufs", chicks: "Poussins", available: "Disponible", notAvailable: "Indisponible", details: "Détails", order: "Commander", call: "Appel", whatsapp: "WhatsApp", close: "Fermer", eggStats: "Œufs/an", meatStats: "Poids/Chair", quickView: "Aperçu", about: "À propos", selectOrder: "Que souhaitez-vous commander ?" },
-    ar: { title: "نخبة", titleAccent: "السلالات", subTitle: "ننتقي أفضل السلالات العالمية لضمان أعلى جودة في إنتاج البيض واللحم.", eggs: "البيض", chicks: "الكتاكيت", available: "متاح", notAvailable: "غير متاح", details: "عرض التفاصيل الكاملة", order: "طلب الآن", call: "اتصال", whatsapp: "واتساب", close: "إغلاق", eggStats: "بيضة/سنة", meatStats: "اللحم/الوزن", quickView: "لمحة سريعة", about: "نبذة عن السلالة", selectOrder: "ماذا ترغب في طلبه؟" },
-    en: { title: "Premium", titleAccent: "Breeds", subTitle: "We select the finest global breeds to ensure top-tier production quality.", eggs: "Eggs", chicks: "Chicks", available: "Available", notAvailable: "Not Available", details: "View Details", order: "Order", call: "Call", whatsapp: "WhatsApp", close: "Close", eggStats: "Eggs/yr", meatStats: "Meat/Wt", quickView: "Quick View", about: "About Breed", selectOrder: "What would you like to order?" }
+    fr: { eggs: "Œufs", chicks: "Poussins", hens: "Poules", details: "Détails", order: "Commander", about: "À propos", call: "Appel", whatsapp: "WhatsApp", selectOrder: "Que souhaitez-vous ?" },
+    ar: { eggs: "البيض المخصب", chicks: "الكتاكيت", hens: "الدجاج", details: "التفاصيل", order: "طلب الآن", about: "نبذة عن السلالة", call: "اتصال", whatsapp: "واتساب", selectOrder: "ماذا ترغب في طلبه؟" },
+    en: { eggs: "Eggs", chicks: "Chicks", hens: "Hens", details: "Details", order: "Order Now", about: "About", call: "Call", whatsapp: "WhatsApp", selectOrder: "What would you like?" }
   }[currentLang];
 
   return (
-    <section id="breeds" dir={currentLang === "ar" ? "rtl" : "ltr"} className="py-24 px-6 bg-background relative">
-      
-      {/* قسم العنوان المضاف (Header) */}
-      <div className="max-w-4xl mx-auto text-center mb-20 space-y-4">
-        <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-accent/10 text-accent border border-accent/20 mb-2">
-          <Activity className="w-4 h-4" />
-          <span className="text-[10px] font-black uppercase tracking-[0.3em]">Mr. Rooster Breeds</span>
-        </div>
-        <h2 className="text-4xl md:text-6xl font-black text-foreground tracking-tight">
-          {ui.title} <span className="text-accent">{ui.titleAccent}</span>
-        </h2>
-        <p className="text-muted-foreground text-lg font-medium max-w-2xl mx-auto leading-relaxed">
-          {ui.subTitle}
-        </p>
-      </div>
-
-      <div className="max-w-6xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-8">
+    <section id="breeds" dir={currentLang === "ar" ? "rtl" : "ltr"} className="py-12 md:py-24 bg-background">
+      <div className="max-w-6xl mx-auto grid grid-cols-2 lg:grid-cols-4 gap-4 md:gap-8 px-4">
         {breedsData.map((breed) => (
-          <div key={breed.id} className="relative group bg-card rounded-[2.5rem] border border-border flex flex-col hover:border-accent hover:shadow-2xl transition-all duration-500">
-            
-            {/* 1. الـ Hover Card */}
-            <div className={`absolute z-[70] invisible md:group-hover:visible opacity-0 group-hover:opacity-100 transition-all duration-500 w-80 p-6 bg-card border-2 border-accent/20 rounded-[2.5rem] shadow-2xl backdrop-blur-xl -top-10 ${currentLang === 'ar' ? 'right-[110%]' : 'left-[110%]'}`}>
-              <div className="flex items-center gap-2 mb-4 text-accent border-b border-accent/10 pb-3">
-                <Activity className="w-4 h-4 animate-pulse" />
-                <span className="text-[11px] font-black uppercase tracking-widest">{ui.quickView}</span>
-              </div>
-              <p className="text-[13px] leading-relaxed text-foreground/80 mb-4 font-medium">{breed.descriptions[currentLang]}</p>
-              <div className="grid grid-cols-2 gap-3">
-                <div className="bg-accent/5 p-3 rounded-2xl border border-accent/10">
-                  <span className="text-[9px] font-black text-foreground/40 block mb-1 uppercase tracking-tighter">{ui.eggStats}</span>
-                  <p className="text-xl font-black text-accent">{breed.stats.eggs}</p>
-                </div>
-                <div className="bg-accent/5 p-3 rounded-2xl border border-accent/10">
-                  <span className="text-[9px] font-black text-foreground/40 block mb-1 uppercase tracking-tighter">{ui.meatStats}</span>
-                  <p className="text-[10px] font-black text-foreground leading-tight">{breed.stats.meat[currentLang]}</p>
-                </div>
-              </div>
-              <div className={`absolute top-20 w-4 h-4 bg-card border-t-2 border-l-2 border-accent/20 rotate-45 ${currentLang === 'ar' ? '-right-[9px]' : '-left-[9px]'}`} />
+          <div key={breed.id} className="relative group bg-card rounded-[2rem] border p-4 md:p-6 flex flex-col items-center text-center hover:border-accent transition-all duration-500 shadow-sm hover:shadow-xl">
+            {/* Hover Info Desktop */}
+            <div className={`absolute z-50 hidden lg:group-hover:block opacity-0 group-hover:opacity-100 transition-all duration-300 w-72 p-5 bg-card border-2 border-accent/30 rounded-3xl shadow-2xl -top-5 ${currentLang === 'ar' ? 'right-[105%]' : 'left-[105%]'}`}>
+              <h4 className="font-black text-accent mb-2 text-sm">{breed.names[currentLang]}</h4>
+              <p className="text-[11px] leading-relaxed text-foreground/80 line-clamp-4">{breed.descriptions[currentLang]}</p>
             </div>
 
-            {/* 2. محتوى البطاقة */}
-            <div className="p-6 text-center flex-grow cursor-pointer" onClick={() => { setSelectedBreed(breed); setSelectedImgIdx(0); }}>
-              <div className="w-24 h-24 bg-accent/10 rounded-full mx-auto mb-4 overflow-hidden group-hover:scale-110 transition-transform duration-500 border-2 border-transparent group-hover:border-accent shadow-lg">
-                <img src={breed.images[0]} alt={breed.names[currentLang]} className="w-full h-full object-cover" />
+            <div className="cursor-pointer flex-grow" onClick={() => { setSelectedBreed(breed); setSelectedImgIdx(0); }}>
+              <div className="w-20 h-20 md:w-28 md:h-28 bg-accent/5 rounded-full mx-auto mb-4 overflow-hidden border-2 border-transparent group-hover:border-accent transition-all">
+                <img src={breed.images[0]} className="w-full h-full object-cover" alt="breed" />
               </div>
-              <h3 className="font-bold text-lg mb-4 text-foreground group-hover:text-accent transition-colors">{breed.names[currentLang]}</h3>
+              <h3 className="font-bold text-xs md:text-lg mb-3 h-10 flex items-center justify-center leading-tight">
+                {breed.names[currentLang]}
+              </h3>
               
-              <div className="flex justify-center gap-4 mb-6">
-                 <div className="flex flex-col items-center gap-1">
-                    <span className={`text-xl ${!breed.available.eggs && 'grayscale opacity-30'}`}>🥚</span>
-                    <span className={`text-[8px] font-bold ${breed.available.eggs ? 'text-yellow-600' : 'text-muted-foreground'}`}>{ui.eggs}</span>
-                 </div>
-                 <div className="flex flex-col items-center gap-1">
-                    <span className={`text-xl ${!breed.available.chicks && 'grayscale opacity-30'}`}>🐤</span>
-                    <span className={`text-[8px] font-bold ${breed.available.chicks ? 'text-blue-600' : 'text-muted-foreground'}`}>{ui.chicks}</span>
-                 </div>
+              <div className="flex justify-center gap-4 mb-4">
+                <div className={`flex flex-col items-center ${!breed.available.eggs && 'opacity-20 grayscale'}`}>
+                  <span className="text-xl">🥚</span>
+                  <span className="text-[9px] font-black text-yellow-700">{ui.eggs}</span>
+                </div>
+                <div className={`flex flex-col items-center ${!breed.available.chicks && 'opacity-20 grayscale'}`}>
+                  <span className="text-xl">🐥</span>
+                  <span className="text-[9px] font-black text-orange-600">{ui.chicks}</span>
+                </div>
               </div>
             </div>
 
-            <div className="p-4 pt-0">
-              <Button onClick={() => { setSelectedBreed(breed); setSelectedImgIdx(0); }} className="w-full bg-accent hover:bg-accent/90 text-white font-black rounded-xl h-11 transition-all shadow-md">
-                {ui.details}
-              </Button>
-            </div>
+            <Button onClick={() => { setSelectedBreed(breed); setSelectedImgIdx(0); }} className="w-full bg-accent text-white rounded-xl h-10 font-bold">
+              {ui.details}
+            </Button>
           </div>
         ))}
       </div>
 
-      {/* 3. مودال التفاصيل الكاملة */}
-      {selectedBreed && (
-        <div className="fixed inset-0 bg-black/80 z-[100] flex items-center justify-center p-4 backdrop-blur-md">
-          <div className="bg-card rounded-[2.5rem] w-full max-w-4xl max-h-[95vh] overflow-y-auto shadow-2xl border border-white/10">
-            <div className="sticky top-0 bg-accent p-6 flex justify-between items-center z-10 text-white">
-              <h2 className="text-3xl font-black">{selectedBreed.names[currentLang]}</h2>
-              <button onClick={() => setSelectedBreed(null)} className="p-2 hover:bg-white/20 rounded-full transition-colors"><X className="w-8 h-8" /></button>
-            </div>
+      <AnimatePresence>
+        {selectedBreed && (
+          <div 
+            onClick={() => setSelectedBreed(null)} // الإغلاق عند الضغط في الجوانب
+            className="fixed inset-0 bg-black/95 z-[100] flex items-center justify-center p-0 md:p-6 backdrop-blur-md cursor-pointer"
+          >
+            <motion.div 
+              initial={{ y: "100%" }} 
+              animate={{ y: 0 }} 
+              exit={{ y: "100%" }} 
+              onClick={(e) => e.stopPropagation()} // منع الإغلاق عند الضغط داخل المودال
+              className="bg-card w-full max-w-4xl max-h-screen overflow-y-auto md:rounded-[3rem] relative shadow-2xl cursor-default"
+            >
+              <button onClick={() => setSelectedBreed(null)} className="absolute top-6 right-6 z-[110] p-3 bg-black/20 hover:bg-black/40 rounded-full text-white"><X className="w-6 h-6"/></button>
 
-            <div className="p-8 space-y-8">
-              <div className="space-y-4 text-center">
-                <div className="relative aspect-video w-full bg-muted rounded-3xl overflow-hidden border-4 border-accent/5">
-                  <img src={selectedBreed.images[selectedImgIdx]} className="w-full h-full object-contain p-4 transition-all duration-500" alt="breed" />
-                </div>
-                <div className="flex gap-3 justify-center overflow-x-auto py-2">
-                  {selectedBreed.images.map((img, idx) => (
-                    <button key={idx} onClick={() => setSelectedImgIdx(idx)} className={`w-20 h-20 rounded-xl overflow-hidden border-2 transition-all ${selectedImgIdx === idx ? "border-accent scale-105" : "border-transparent opacity-60 hover:opacity-100"}`}>
-                      <img src={img} className="w-full h-full object-cover" alt="thumb" />
-                    </button>
-                  ))}
-                </div>
+              {/* معرض الصور Swipe Enabled */}
+              <div className="relative aspect-square md:aspect-video bg-black overflow-hidden flex items-center justify-center">
+                <motion.img
+                  key={selectedImgIdx}
+                  src={selectedBreed.images[selectedImgIdx]}
+                  drag="x"
+                  dragConstraints={{ left: 0, right: 0 }}
+                  onDragEnd={(_, { offset }) => {
+                    if (offset.x < -50) setSelectedImgIdx((prev) => (prev + 1) % selectedBreed.images.length);
+                    if (offset.x > 50) setSelectedImgIdx((prev) => (prev - 1 + selectedBreed.images.length) % selectedBreed.images.length);
+                  }}
+                  className="w-full h-full object-contain cursor-grab active:cursor-grabbing"
+                />
               </div>
 
-              <div className="grid md:grid-cols-2 gap-12">
-                <div className="space-y-6">
+              <div className="p-6 md:p-12">
+                <h2 className="text-2xl md:text-4xl font-black text-accent mb-6">{selectedBreed.names[currentLang]}</h2>
+                <div className="space-y-8">
                   <div>
-                    <h4 className="text-2xl font-bold mb-4 text-accent border-b-2 border-accent/10 pb-2">{ui.about}</h4>
-                    <p className="text-foreground/80 text-lg leading-relaxed">{selectedBreed.descriptions[currentLang]}</p>
+                    <h4 className="font-bold text-muted-foreground mb-3 flex items-center gap-2 uppercase tracking-widest text-[10px]"><Info className="w-4 h-4"/> {ui.about}</h4>
+                    <p className="leading-relaxed text-sm md:text-lg text-foreground/80">{selectedBreed.descriptions[currentLang]}</p>
                   </div>
+
                   <div className="grid grid-cols-2 gap-4">
-                    {selectedBreed.features.map((f, i) => (
-                      <div key={i} className="bg-accent/5 p-4 rounded-2xl border border-accent/10 flex items-center gap-3">
-                        <span className="text-2xl">{f.icon}</span>
+                    {selectedBreed.features.map((f: any, i: number) => (
+                      <div key={i} className="p-5 bg-accent/5 rounded-3xl border border-accent/10 flex items-center gap-4">
+                        <span className="text-3xl">{f.icon}</span>
                         <div>
-                          <p className="text-[9px] uppercase font-bold text-foreground/40">{f.labels[currentLang]}</p>
-                          <p className="font-black text-accent text-sm">{f.values[currentLang]}</p>
+                          <span className="text-[10px] text-muted-foreground block font-bold uppercase">{f.labels[currentLang]}</span>
+                          <span className="font-bold text-accent md:text-lg">{f.values[currentLang]}</span>
                         </div>
                       </div>
                     ))}
                   </div>
-                </div>
 
-                <div className="bg-muted/30 p-6 rounded-[2rem] border border-border">
-                  <div className="flex items-center gap-2 mb-6">
-                    <ShoppingCart className="w-5 h-5 text-accent" />
-                    <h4 className="font-black text-lg">{ui.selectOrder}</h4>
-                  </div>
-
-                  <div className="space-y-4">
-                    <button
-                      onClick={() => selectedBreed.available.eggs && setOrderModal({ isOpen: true, breedName: selectedBreed.names[currentLang], type: ui.eggs })}
-                      className={`w-full p-4 rounded-2xl flex items-center justify-between border-2 transition-all ${
-                        selectedBreed.available.eggs 
-                        ? "border-yellow-200 bg-yellow-50/50 hover:border-yellow-400 text-yellow-900" 
-                        : "border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed"
-                      }`}
-                    >
-                      <div className="flex items-center gap-4">
-                        <span className="text-3xl">🥚</span>
-                        <div className={`${currentLang === 'ar' ? 'text-right' : 'text-left'}`}>
-                          <p className="font-black">{ui.eggs}</p>
-                          <p className="text-[10px] font-bold opacity-60">{selectedBreed.available.eggs ? ui.available : ui.notAvailable}</p>
-                        </div>
-                      </div>
-                      {selectedBreed.available.eggs && <div className="bg-yellow-500 text-white p-2 rounded-full"><ShoppingCart className="w-4 h-4" /></div>}
-                    </button>
-
-                    <button
-                      onClick={() => selectedBreed.available.chicks && setOrderModal({ isOpen: true, breedName: selectedBreed.names[currentLang], type: ui.chicks })}
-                      className={`w-full p-4 rounded-2xl flex items-center justify-between border-2 transition-all ${
-                        selectedBreed.available.chicks 
-                        ? "border-blue-200 bg-blue-50/50 hover:border-blue-400 text-blue-900" 
-                        : "border-gray-200 bg-gray-50 opacity-50 cursor-not-allowed"
-                      }`}
-                    >
-                      <div className="flex items-center gap-4">
-                        <span className="text-3xl">🐤</span>
-                        <div className={`${currentLang === 'ar' ? 'text-right' : 'text-left'}`}>
-                          <p className="font-black">{ui.chicks}</p>
-                          <p className="text-[10px] font-bold opacity-60">{selectedBreed.available.chicks ? ui.available : ui.notAvailable}</p>
-                        </div>
-                      </div>
-                      {selectedBreed.available.chicks && <div className="bg-blue-500 text-white p-2 rounded-full"><ShoppingCart className="w-4 h-4" /></div>}
-                    </button>
+                  {/* خيارات الطلب المباشر */}
+                  <div className="pt-8 border-t">
+                    <h4 className="text-center font-bold mb-6">{ui.selectOrder}</h4>
+                    <div className="grid grid-cols-3 gap-3">
+                      <Button onClick={() => setOrderModal({ b: selectedBreed.names[currentLang], t: ui.eggs })} disabled={!selectedBreed.available.eggs} variant="outline" className="h-24 rounded-3xl flex flex-col gap-2 border-2">
+                        <span className="text-2xl">🥚</span><span className="text-[10px] font-black">{ui.eggs}</span>
+                      </Button>
+                      <Button onClick={() => setOrderModal({ b: selectedBreed.names[currentLang], t: ui.chicks })} disabled={!selectedBreed.available.chicks} variant="outline" className="h-24 rounded-3xl flex flex-col gap-2 border-2">
+                        <span className="text-2xl">🐥</span><span className="text-[10px] font-black">{ui.chicks}</span>
+                      </Button>
+                      <Button onClick={() => setOrderModal({ b: selectedBreed.names[currentLang], t: ui.hens })} disabled={!selectedBreed.available.hens} variant="outline" className="h-24 rounded-3xl flex flex-col gap-2 border-2">
+                        <span className="text-2xl">🐔</span><span className="text-[10px] font-black">{ui.hens}</span>
+                      </Button>
+                    </div>
                   </div>
                 </div>
               </div>
-
-              <Button onClick={() => setSelectedBreed(null)} className="w-full py-6 text-lg font-black bg-accent/10 text-accent border-2 border-accent/20 rounded-2xl hover:bg-accent hover:text-white transition-all">
-                {ui.close}
-              </Button>
-            </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
 
-      {/* 4. مودال التواصل */}
-      {orderModal && (
-        <div className="fixed inset-0 bg-black/70 z-[110] flex items-center justify-center p-6 backdrop-blur-sm">
-          <div className="bg-card rounded-[2.5rem] w-full max-w-sm p-8 border border-accent/20 shadow-2xl relative">
-            <button onClick={() => setOrderModal(null)} className="absolute top-6 right-6 p-2 hover:bg-muted rounded-full"><X className="w-5 h-5" /></button>
-            <div className="text-center mb-8">
-               <h3 className="font-black text-2xl text-accent mb-2">{ui.order} {orderModal.type}</h3>
-               <p className="text-sm font-bold text-foreground/60">{orderModal.breedName}</p>
-            </div>
-            <div className="space-y-4">
-              <a href={`tel:${PHONE_NUMBER}`} className="flex items-center justify-between p-5 bg-blue-50 rounded-2xl text-blue-700 border border-blue-100 hover:scale-[1.02] transition-transform font-bold">
-                <div className="flex items-center gap-4"><Phone className="w-6 h-6" /> <span>{ui.call}</span></div>
-              </a>
-              <a href={`https://wa.me/${WHATSAPP_NUMBER}`} target="_blank" rel="noreferrer" className="flex items-center justify-between p-5 bg-green-50 rounded-2xl text-green-700 border border-green-100 hover:scale-[1.02] transition-transform font-bold">
-                <div className="flex items-center gap-4"><MessageCircle className="w-6 h-6" /> <span>{ui.whatsapp}</span></div>
-              </a>
-            </div>
+      {/* مودال التواصل */}
+      <AnimatePresence>
+        {orderModal && (
+          <div onClick={() => setOrderModal(null)} className="fixed inset-0 bg-black/80 z-[200] flex items-center justify-center p-6 backdrop-blur-sm cursor-pointer">
+            <motion.div initial={{ scale: 0.9 }} animate={{ scale: 1 }} onClick={(e) => e.stopPropagation()} className="bg-card p-8 rounded-[2.5rem] max-w-sm w-full text-center relative border shadow-2xl cursor-default">
+              <button onClick={() => setOrderModal(null)} className="absolute top-6 right-6"><X/></button>
+              <div className="w-16 h-16 bg-accent/10 rounded-full flex items-center justify-center mx-auto mb-4 text-accent"><ShoppingCart/></div>
+              <h3 className="text-xl font-black mb-2">{ui.order}</h3>
+              <p className="text-sm text-muted-foreground mb-8">{orderModal.b} - {orderModal.t}</p>
+              <div className="grid gap-3">
+                <a href={`https://wa.me/${WHATSAPP_NUMBER}`} className="flex items-center justify-center gap-3 p-4 bg-[#25D366] text-white rounded-2xl font-black"><MessageCircle className="w-5 h-5"/> {ui.whatsapp}</a>
+                <a href={`tel:${PHONE_NUMBER}`} className="flex items-center justify-center gap-3 p-4 bg-accent text-white rounded-2xl font-black"><Phone className="w-5 h-5"/> {ui.call}</a>
+              </div>
+            </motion.div>
           </div>
-        </div>
-      )}
+        )}
+      </AnimatePresence>
     </section>
   );
 }
